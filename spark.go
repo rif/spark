@@ -36,15 +36,13 @@ func main() {
 		handler = http.FileServer(http.Dir(*dir))
 	}
 	if *file != "" {
-		content, err := ioutil.ReadFile(*file)
-		if err != nil {
+		if content, err := ioutil.ReadFile(*file); err != nil {
 			log.Fatal("Error reading file: ", err)
+		} else {
+			handler = StringHandler{body: string(content)}
 		}
-		log.Print("file: ", string(content))
-		handler = StringHandler{body: string(content)}
 	}
 	if *body != "" {
-		log.Print("body: ", *body)
 		handler = StringHandler{body: *body}
 	}
 	log.Fatal(http.ListenAndServe(listen, handler))
