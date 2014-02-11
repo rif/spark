@@ -24,8 +24,8 @@ $ spark static_site/
 ```
 go get github.com/rif/spark
 ```
-- binaries:
+- static binaries:
 
-[static linux64](https://raw.github.com/rif/spark/master/spark_linux64.xz)
+[linux64](https://raw.github.com/rif/spark/master/spark_linux64.xz)
 [osx](https://raw.github.com/rif/spark/master/spark_osx.xz)
 
