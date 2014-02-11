@@ -12,8 +12,9 @@ Usage of spark:
 
 # Examples
 
-- spark message.html
-- spark "<h1>Out of order</h1><p>Working on it...</p>"
-- spark static_site/
-- spark -port 80 "<h1>Ooops!</h1>"
-
+```
+$ spark message.html
+$ spark "<h1>Out of order</h1><p>Working on it...</p>"
+$ spark static_site/
+# spark -port 80 "<h1>Ooops!</h1>"
+```
