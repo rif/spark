@@ -3,16 +3,17 @@
 Emergency web server
 
 
-```shell
-❯ spark -h                                 
+```
+❯ spark -h
 Usage of spark:
   -address="0.0.0.0": Listening address
-  -body="": Serve the given body
-  -dir="": Serve files from directory
-  -file="": Serve the file content
   -port="8080": Listening port
 ```
 
 # Examples
 
-spark -file index.html
+- spark message.html
+- spark "<h1>Out of order</h1><p>Working on it...</p>"
+- spark static_site/
+- spark -port 80 "<h1>Ooops!</h1>"
+
