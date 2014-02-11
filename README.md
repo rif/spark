@@ -11,7 +11,7 @@ Usage of spark:
   -dir="": Serve files from directory
   -file="": Serve the file content
   -port="8080": Listening port
-
+```
 
 # Examples
 
