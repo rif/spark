@@ -2,6 +2,8 @@
 
 Emergency web server
 
+
+```shell
 ❯ spark -h                                 
 Usage of spark:
   -address="0.0.0.0": Listening address
