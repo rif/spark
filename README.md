@@ -2,6 +2,10 @@
 
 Emergency web server
 
+For those occasions when your webserver si down and you want to display a quick maintainance note. Or just want to quickly demo a static site. Or whatever :)
+
+It can take a directory, a file or directly the body string.
+
 
 ```
 ❯ spark -h
@@ -29,3 +33,8 @@ go get github.com/rif/spark
 [linux64](https://raw.github.com/rif/spark/master/spark_linux64.xz)
 [osx](https://raw.github.com/rif/spark/master/spark_osx.xz)
 
+```
+tar xvf spark_linux64.xz
+mv spark_linux64 somhere_in_your_path/spark
+spark away!
+```
