@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -14,12 +13,10 @@ var (
 	port    = flag.String("port", "8080", "Listening port")
 )
 
-type StringHandler struct {
-	body string
-}
+type bytesHandler []byte
 
-func (sh StringHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	io.WriteString(w, sh.body)
+func (h bytesHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	w.Write(h)
 }
 
 func main() {
@@ -38,11 +35,11 @@ func main() {
 			if content, err := ioutil.ReadFile(body); err != nil {
 				log.Fatal("Error reading file: ", err)
 			} else {
-				handler = StringHandler{body: string(content)}
+				handler = bytesHandler(content)
 			}
 		}
 	} else {
-		handler = StringHandler{body: body}
+		handler = bytesHandler(body)
 	}
 	log.Fatal(http.ListenAndServe(listen, handler))
 }
