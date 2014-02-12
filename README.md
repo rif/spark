@@ -31,8 +31,8 @@ go get github.com/rif/spark
 ```
 - static binaries:
 
-[linux64](https://raw.github.com/rif/spark/master/spark_linux64.xz)
-[osx](https://raw.github.com/rif/spark/master/spark_osx.xz)
+[linux64](https://github.com/rif/spark/releases/download/v1.1/linux64.binary)
+[osx](https://github.com/rif/spark/releases/download/v1.1/OSX.binary)
 
 ```
 tar xvf spark_linux64.xz
