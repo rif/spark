@@ -17,8 +17,8 @@ var (
 type bytesHandler []byte
 
 func (h bytesHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	w.WriteHeader(*status)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(*status)
 	w.Write(h)
 }
 
