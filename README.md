@@ -35,6 +35,6 @@ go get github.com/rif/spark
 
 ```
 tar xvf spark_linux64.xz
-mv spark_linux64 somhere_in_your_path/spark
+mv spark_linux64 somewhere_in_your_path/spark
 spark away!
 ```
