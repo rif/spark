@@ -12,6 +12,7 @@ It can take a directory, a file or directly the body string.
 Usage of spark:
   -address="0.0.0.0": Listening address
   -port="8080": Listening port
+  -status=200: Returned HTTP status code
 ```
 
 ## examples

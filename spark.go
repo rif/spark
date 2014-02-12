@@ -11,11 +11,14 @@ import (
 var (
 	address = flag.String("address", "0.0.0.0", "Listening address")
 	port    = flag.String("port", "8080", "Listening port")
+	status  = flag.Int("status", 200, "Returned HTTP status code")
 )
 
 type bytesHandler []byte
 
 func (h bytesHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	w.WriteHeader(*status)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Write(h)
 }
 
