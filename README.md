@@ -29,13 +29,8 @@ $ spark static_site/
 ```
 go get github.com/rif/spark
 ```
-- static binaries:
+- static binaries (linux/osx/windows):
 
-[linux64](https://github.com/rif/spark/releases/download/v1.1/spark_linux64.xz)
-[osx](https://github.com/rif/spark/releases/download/v1.1/spark_osx.xz)
+https://copy.com/fYSrNrgOZlVj
 
-```
-tar xvf spark_linux64.xz
-mv spark somewhere_in_your_path/
-spark away!
-```
+
