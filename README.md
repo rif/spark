@@ -29,7 +29,7 @@ $ spark static_site/
 ```
 go get github.com/rif/spark
 ```
-- static binaries (linux/osx/windows):
+- static binaries (linux/osx/freebsd/windows):
 
 https://copy.com/fYSrNrgOZlVj
 
