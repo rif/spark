@@ -11,7 +11,10 @@ import (
 var (
 	address = flag.String("address", "0.0.0.0", "Listening address")
 	port    = flag.String("port", "8080", "Listening port")
+	sslPort = flag.String("sslPort", "10433", "SSL listening port")
 	status  = flag.Int("status", 200, "Returned HTTP status code")
+	cert    = flag.String("cert", "cert.pem", "SSL certificate path")
+	key     = flag.String("key", "key.pem", "SSL private Key path")
 )
 
 type bytesHandler []byte
@@ -25,6 +28,7 @@ func (h bytesHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 func main() {
 	flag.Parse()
 	listen := *address + ":" + *port
+	listenTLS := *address + ":" + *sslPort
 	body := flag.Arg(0)
 	if body == "" {
 		body = "<h1>Spark!</h1>"
@@ -44,5 +48,14 @@ func main() {
 	} else {
 		handler = bytesHandler(body)
 	}
+	go func() {
+		if _, err := os.Stat(*cert); err != nil {
+			return
+		}
+		if _, err := os.Stat(*key); err != nil {
+			return
+		}
+		log.Fatal(http.ListenAndServeTLS(listenTLS, *cert, *key, handler))
+	}()
 	log.Fatal(http.ListenAndServe(listen, handler))
 }
