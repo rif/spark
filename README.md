@@ -39,8 +39,8 @@ go run $GOROOT/src/pkg/crypto/tls/generate_cert.go --host="localhost"
 ```
 go get github.com/rif/spark
 ```
-- static binaries (linux/osx/freebsd/windows):
+- static binaries (linux/osx/windows):
 
-https://copy.com/fYSrNrgOZlVj
+[![Gobuild Download](http://gobuild.io/badge/github.com/rif/spark/download.png)](http://gobuild.io/github.com/rif/spark)
 
 
