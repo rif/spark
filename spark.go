@@ -31,7 +31,7 @@ func main() {
 	listenTLS := *address + ":" + *sslPort
 	body := flag.Arg(0)
 	if body == "" {
-		body = "<h1>Spark!</h1>"
+		body = "."
 	}
 	var handler http.Handler
 	if fi, err := os.Stat(body); err == nil {
