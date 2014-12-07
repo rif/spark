@@ -57,5 +57,6 @@ func main() {
 		}
 		log.Fatal(http.ListenAndServeTLS(listenTLS, *cert, *key, handler))
 	}()
+	log.Printf("Serving %s on %s...", body, listen)
 	log.Fatal(http.ListenAndServe(listen, handler))
 }
