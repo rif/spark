@@ -25,7 +25,7 @@ Usage of spark:
 $ spark message.html
 $ spark "<h1>Out of order</h1><p>Working on it...</p>"
 $ spark static_site/
-# spark -port 80 -sslPort 443 "<h1>Ooops!</h1>"
+$ spark -port 80 -sslPort 443 "<h1>Ooops!</h1>"
 ```
 
 To quickly generate a ssl certificate run:
