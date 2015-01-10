@@ -31,7 +31,7 @@ $ spark -port 80 -sslPort 443 "<h1>Ooops!</h1>"
 To quickly generate a ssl certificate run:
 
 ```
-go run $GOROOT/src/pkg/crypto/tls/generate_cert.go --host="localhost"
+go run $GOROOT/src/crypto/tls/generate_cert.go --host="localhost"
 ```
 
 ## install
