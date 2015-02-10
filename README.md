@@ -39,8 +39,14 @@ go run $GOROOT/src/crypto/tls/generate_cert.go --host="localhost"
 ```
 go get github.com/rif/spark
 ```
-- static binaries (linux/osx/windows):
+- static binaries (linux/arm/osx/windows):
 
-[![Gobuild Download](http://gobuild.io/badge/github.com/rif/spark/download.png)](http://gobuild.io/github.com/rif/spark)
+[Binary downloads](https://copy.com/ASm3M2aWp0aU9kN4)
 
+## crossbuild
 
+```
+docker build --rm -t crossbuild crossbuild/ # creates a ubuntu docker container with golang crossbuild
+docker run --rm -itv $GOPATH:/go crossbuild /go/src/github.com/rif/spark/crossbuild.sh
+```
+The results will be found in ./build directory.
