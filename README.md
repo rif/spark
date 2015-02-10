@@ -41,7 +41,7 @@ go get github.com/rif/spark
 ```
 - static binaries (linux/arm/osx/windows):
 
-<a href="https://copy.com/ASm3M2aWp0aU9kN4/spark" target="_blank">Binary downloads</a>
+<a href="https://www.copy.com/s/ASm3M2aWp0aU9kN4/spark" target="_blank">Binary downloads</a>
 
 ## crossbuild
 
@@ -50,5 +50,5 @@ docker build --rm -t crossbuild crossbuild/
 # creates a ubuntu docker container with golang crossbuild
 
 docker run --rm -itv $GOPATH:/go crossbuild /go/src/github.com/rif/spark/crossbuild.sh
-# creates a ./build directory that will be shared with the world
+# creates a ./build directory that can be shared with the world
 ```
