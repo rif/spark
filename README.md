@@ -16,6 +16,7 @@ Usage of spark:
   -key="key.pem": SSL private Key path
   -sslPort="10433": SSL listening port
   -status=200: Returned HTTP status code
+  -path="/": URL path
 
 ```
 

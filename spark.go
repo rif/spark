@@ -12,6 +12,7 @@ var (
 	address = flag.String("address", "0.0.0.0", "Listening address")
 	port    = flag.String("port", "8080", "Listening port")
 	sslPort = flag.String("sslPort", "10433", "SSL listening port")
+	path    = flag.String("path", "/", "URL path")
 	status  = flag.Int("status", 200, "Returned HTTP status code")
 	cert    = flag.String("cert", "cert.pem", "SSL certificate path")
 	key     = flag.String("key", "key.pem", "SSL private Key path")
@@ -37,7 +38,7 @@ func main() {
 	if fi, err := os.Stat(body); err == nil {
 		switch mode := fi.Mode(); {
 		case mode.IsDir():
-			handler = http.FileServer(http.Dir(body))
+			handler = http.StripPrefix(*path, http.FileServer(http.Dir(body)))
 		case mode.IsRegular():
 			if content, err := ioutil.ReadFile(body); err != nil {
 				log.Fatal("Error reading file: ", err)
@@ -48,6 +49,7 @@ func main() {
 	} else {
 		handler = bytesHandler(body)
 	}
+	http.Handle(*path, handler)
 	go func() {
 		if _, err := os.Stat(*cert); err != nil {
 			return
@@ -55,8 +57,8 @@ func main() {
 		if _, err := os.Stat(*key); err != nil {
 			return
 		}
-		log.Fatal(http.ListenAndServeTLS(listenTLS, *cert, *key, handler))
+		log.Fatal(http.ListenAndServeTLS(listenTLS, *cert, *key, nil))
 	}()
-	log.Printf("Serving %s on %s...", body, listen)
-	log.Fatal(http.ListenAndServe(listen, handler))
+	log.Printf("Serving %s on %s%s...", body, listen, *path)
+	log.Fatal(http.ListenAndServe(listen, nil))
 }
