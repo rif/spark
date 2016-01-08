@@ -46,10 +46,5 @@ go get github.com/rif/spark
 
 ## crossbuild
 
-```
-docker build --rm -t crossbuild crossbuild/
-# creates a ubuntu docker container with golang crossbuild
+Just run ./crossbuild.sh (needs go 1.5 or later). It also compresses the binaries with upx, comment those lines if you don't need compression.
 
-docker run --rm -itv $GOPATH:/go crossbuild /go/src/github.com/rif/spark/crossbuild.sh
-# creates a ./build directory that can be shared with the world
-```
