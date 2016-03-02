@@ -42,7 +42,7 @@ go get github.com/rif/spark
 ```
 - static binaries (linux/arm/osx/windows):
 
-<a href="https://www.dropbox.com/sh/ee9h1nq2wcyi5cn/AAAR4-_i01IRrGaF34VI26USa?dl=0" target="_blank">Binary downloads</a>
+<a href="https://github.com/rif/spark/releases" target="_blank">Binary downloads</a>
 
 ## crossbuild
 
