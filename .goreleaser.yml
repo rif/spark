@@ -1,0 +1,12 @@
+# .goreleaser.yml
+# Build customization
+builds:
+  - binary: telegraf-freeswitch
+    goos:
+      - windows
+      - darwin
+      - linux
+      - freebsd
+    goarch:
+      - amd64
+      - 386
