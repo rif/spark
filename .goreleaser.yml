@@ -1,7 +1,7 @@
 # .goreleaser.yml
 # Build customization
 builds:
-  - binary: telegraf-freeswitch
+  - binary: spark
     goos:
       - windows
       - darwin
