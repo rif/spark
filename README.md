@@ -17,6 +17,7 @@ Usage of spark:
   -sslPort="10433": SSL listening port
   -status=200: Returned HTTP status code
   -path="/": URL path
+  -deny="": Sesitive directory or file patterns to be denied when listing path (comma sperated)
 
 ```
 
@@ -27,6 +28,7 @@ $ spark message.html
 $ spark "<h1>Out of order</h1><p>Working on it...</p>"
 $ spark static_site/
 $ spark -port 80 -sslPort 443 "<h1>Ooops!</h1>"
+$ spark -deny ".git*,LICENSE" ~/go/rif/spark
 ```
 
 To quickly generate a ssl certificate run:
@@ -43,8 +45,3 @@ go get github.com/rif/spark
 - static binaries (linux/arm/osx/windows):
 
 <a href="https://github.com/rif/spark/releases" target="_blank">Binary downloads</a>
-
-## crossbuild
-
-Just run ./crossbuild.sh (needs go 1.5 or later). It also compresses the binaries with upx, comment those lines if you don't need compression.
-

@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
+	"strings"
 )
 
 var (
@@ -13,6 +15,7 @@ var (
 	port    = flag.String("port", "8080", "Listening port")
 	sslPort = flag.String("sslPort", "10433", "SSL listening port")
 	path    = flag.String("path", "/", "URL path")
+	deny    = flag.String("deny", "", "Sesitive directories or files to be forbidden when listing path (comma sperated)")
 	status  = flag.Int("status", 200, "Returned HTTP status code")
 	cert    = flag.String("cert", "cert.pem", "SSL certificate path")
 	key     = flag.String("key", "key.pem", "SSL private Key path")
@@ -24,6 +27,35 @@ func (h bytesHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(*status)
 	w.Write(h)
+}
+
+func isDenied(path, denyList string) bool {
+	if len(denyList) == 0 {
+		return false
+	}
+	for _, pathElement := range strings.Split(path, string(filepath.Separator)) {
+		for _, denyElement := range strings.Split(denyList, ",") {
+			match, err := filepath.Match(strings.TrimSpace(denyElement), pathElement)
+			if err != nil {
+				log.Print("error matching file path element: ", err)
+			}
+			if match {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+type protectdFileSystem struct {
+	fs http.FileSystem
+}
+
+func (pfs protectdFileSystem) Open(path string) (http.File, error) {
+	if isDenied(path, *deny) {
+		return nil, os.ErrPermission
+	}
+	return pfs.fs.Open(path)
 }
 
 func main() {
@@ -38,7 +70,7 @@ func main() {
 	if fi, err := os.Stat(body); err == nil {
 		switch mode := fi.Mode(); {
 		case mode.IsDir():
-			handler = http.StripPrefix(*path, http.FileServer(http.Dir(body)))
+			handler = http.StripPrefix(*path, http.FileServer(protectdFileSystem{http.Dir(body)}))
 		case mode.IsRegular():
 			if content, err := ioutil.ReadFile(body); err != nil {
 				log.Fatal("Error reading file: ", err)
