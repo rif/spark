@@ -15,7 +15,7 @@ var (
 	port    = flag.String("port", "8080", "Listening port")
 	sslPort = flag.String("sslPort", "10433", "SSL listening port")
 	path    = flag.String("path", "/", "URL path")
-	deny    = flag.String("deny", "", "Sesitive directories or files to be forbidden when listing path (comma sperated)")
+	deny    = flag.String("deny", "", "Sesitive directory or file patterns to be denied when listing path (comma sperated)")
 	status  = flag.Int("status", 200, "Returned HTTP status code")
 	cert    = flag.String("cert", "cert.pem", "SSL certificate path")
 	key     = flag.String("key", "key.pem", "SSL private Key path")
