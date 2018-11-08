@@ -17,7 +17,7 @@ Usage of spark:
   -sslPort="10433": SSL listening port
   -status=200: Returned HTTP status code
   -path="/": URL path
-  -deny="": Sesitive directory or file patterns to be denied when listing path (comma sperated)
+  -deny="": Sesitive directory or file patterns to be denied when serving directory (comma sperated)
 
 ```
 
