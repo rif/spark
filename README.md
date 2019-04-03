@@ -17,9 +17,17 @@ Usage of spark:
   -sslPort="10433": SSL listening port
   -status=200: Returned HTTP status code
   -path="/": URL path
-  -deny="": Sesitive directory or file patterns to be denied when serving directory (comma sperated)
+  -deny="": Sensitive directory or file patterns to be denied when serving directory (comma separated)
 
 ```
+
+## install
+- from source
+```
+go get github.com/rif/spark
+```
+- static binaries (linux/arm/osx/windows):
+  <a href="https://github.com/rif/spark/releases" target="_blank">Binary downloads</a>
 
 ## examples
 
@@ -37,11 +45,3 @@ To quickly generate a ssl certificate run:
 go run $GOROOT/src/crypto/tls/generate_cert.go --host="localhost"
 ```
 
-## install
-- from source
-```
-go get github.com/rif/spark
-```
-- static binaries (linux/arm/osx/windows):
-
-<a href="https://github.com/rif/spark/releases" target="_blank">Binary downloads</a>
