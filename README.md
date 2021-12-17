@@ -4,7 +4,7 @@ Emergency web server
 
 For those occasions when your webserver is down and you want to display a quick maintainance note. Or just want to quickly demo a static site. Or whatever :)
 
-It can take a directory, a file or directly the body string.
+It can take a directory, a file or directly the body string. The `-proxy` flag can be useful when used as a development server.
 
 
 ```
@@ -18,7 +18,7 @@ Usage of spark:
   -status=200: Returned HTTP status code
   -path="/": URL path
   -deny="": Sensitive directory or file patterns to be denied when serving directory (comma separated)
-
+  -proxy string: URL prefixes to be proxied to another server e.g. /api=>http://localhost:3000 will forward all requests starting with /api to http://localhost:3000 (comma separated)
 ```
 
 ## install
@@ -37,6 +37,7 @@ $ spark "<h1>Out of order</h1><p>Working on it...</p>"
 $ spark static_site/
 $ spark -port 80 -sslPort 443 "<h1>Ooops!</h1>"
 $ spark -deny ".git*,LICENSE" ~/go/rif/spark
+$ spark -proxy "/api=>http://localhost:9090" .
 ```
 
 To quickly generate a ssl certificate run:
@@ -44,4 +45,3 @@ To quickly generate a ssl certificate run:
 ```
 go run $GOROOT/src/crypto/tls/generate_cert.go --host="localhost"
 ```
-
