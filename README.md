@@ -18,7 +18,8 @@ Usage of spark:
   -status=200: Returned HTTP status code
   -path="/": URL path
   -deny="": Sensitive directory or file patterns to be denied when serving directory (comma separated)
-  -proxy string: URL prefixes to be proxied to another server e.g. /api=>http://localhost:3000 will forward all requests starting with /api to http://localhost:3000 (comma separated)
+  -proxy string: URL prefixes to be proxied to another server e.g. /api=>http://localhost:3000 will
+    forward all requests starting with /api to http://localhost:3000 (comma separated)
 ```
 
 ## install
@@ -37,7 +38,7 @@ $ spark "<h1>Out of order</h1><p>Working on it...</p>"
 $ spark static_site/
 $ spark -port 80 -sslPort 443 "<h1>Ooops!</h1>"
 $ spark -deny ".git*,LICENSE" ~/go/rif/spark
-$ spark -proxy "/api=>http://localhost:9090" .
+$ spark -proxy "/api=>http://localhost:9090/api" .
 ```
 
 To quickly generate a ssl certificate run:

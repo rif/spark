@@ -32,13 +32,16 @@ func (h bytesHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
     w.Write(h)
 }
 
-type proxyHandler string
+type proxyHandler struct {
+	prefix string
+	proxyURL string
+}
 
-func (p proxyHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (ph *proxyHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
     client := &http.Client{
 		Timeout: 5*time.Second,
 	}
-	request, err := http.NewRequest(req.Method, string(p), req.Body)
+	request, err := http.NewRequest(req.Method, ph.proxyURL +strings.TrimLeft(req.URL.String(),ph.prefix), req.Body)
 	if err != nil {
 		log.Println(err)
 	}
@@ -72,8 +75,7 @@ func isDenied(path, denyList string) bool {
     return false
 }
 
-func parseProxy(flagStr string)map[string]string{
-    proxyMap:= make(map[string]string)
+func parseProxy(flagStr string)(handlers []*proxyHandler){
     proxyList := strings.Split(flagStr, ",")
     for _, proxyRedirect := range proxyList {
         proxyElements := strings.Split(proxyRedirect, "=>")
@@ -81,13 +83,16 @@ func parseProxy(flagStr string)map[string]string{
             prefix := strings.TrimSpace(proxyElements[0])
             proxyURL:= strings.TrimSpace(proxyElements[1])
             if strings.HasPrefix(prefix,"/") && strings.HasPrefix(proxyURL,"http") {
-                proxyMap[prefix] = proxyURL
+				handlers = append(handlers, &proxyHandler{
+					prefix: prefix,
+					proxyURL: proxyURL,
+				})
             } else {
                 log.Printf("bad proxy pair: %s=>%s", prefix,proxyURL)
             }
         }
     }
-    return proxyMap
+    return
 }
 
 type protectdFileSystem struct {
@@ -130,10 +135,10 @@ func main() {
     http.Handle(*path, handler)
 
     if (proxy != nil){
-		proxyMap := parseProxy(*proxy)
-        for prefix, proxyURL := range proxyMap {
-            log.Printf("sending %s to %s", prefix,proxyURL)
-            http.Handle(prefix, proxyHandler(proxyURL))
+		proxyHandlers := parseProxy(*proxy)
+        for _, ph := range proxyHandlers {
+            log.Printf("sending %s to %s", ph.prefix,ph.proxyURL)
+            http.Handle(ph.prefix, ph)
         }
     }
 
