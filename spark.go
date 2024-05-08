@@ -24,7 +24,7 @@ var (
 	corsOrigin  = flag.String("corsOrigin", "", "Allow CORS requests from this origin (can be '*')")
 	corsMethods = flag.String("corsMethods", "POST, GET, OPTIONS, PUT, DELETE", "Allowd CORS methods")
 	corsHeaders = flag.String("corsHeaders", "Content-Type, Authorization, X-Requested-With", "Allowed CORS headers")
-	contentType = flag.String("contentType", "text/html; charset=utf-8", "Set response Content-Type")
+	contentType = flag.String("contentType", "", "Set response Content-Type")
 )
 
 type bytesHandler []byte
