@@ -15,7 +15,7 @@ Usage of spark:
   -cert string
     	SSL certificate path (default "cert.pem")
   -contentType string
-    	Set response Content-Type (default "text/html; charset=utf-8")
+    	Set response Content-Type
   -corsHeaders string
     	Allowed CORS headers (default "Content-Type, Authorization, X-Requested-With")
   -corsMethods string
