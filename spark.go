@@ -22,7 +22,7 @@ var (
 	key         = flag.String("key", "key.pem", "SSL private Key path")
 	proxy       = flag.String("proxy", "", "URL prefixes to be proxied to another server e.g. /api=>http://localhost:3000 will forward all requests starting with /api to http://localhost:3000 (comma separated)")
 	corsOrigin  = flag.String("corsOrigin", "", "Allow CORS requests from this origin (can be '*')")
-	corsMethods = flag.String("corsMethods", "POST, GET, OPTIONS, PUT, DELETE", "Allowd CORS methods")
+	corsMethods = flag.String("corsMethods", "POST, GET, OPTIONS, PUT, DELETE", "Allowed CORS methods")
 	corsHeaders = flag.String("corsHeaders", "Content-Type, Authorization, X-Requested-With", "Allowed CORS headers")
 	contentType = flag.String("contentType", "", "Set response Content-Type")
 )
@@ -66,19 +66,54 @@ func (ph *proxyHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	client := &http.Client{
 		Timeout: 5 * time.Second,
 	}
-	request, err := http.NewRequest(req.Method, ph.proxyURL+strings.TrimLeft(req.URL.String(), ph.prefix), req.Body)
+
+	// Construct target URL with proper prefix removal and query parameter preservation
+	targetPath := strings.TrimPrefix(req.URL.Path, ph.prefix)
+	targetURL := ph.proxyURL + targetPath
+	if req.URL.RawQuery != "" {
+		targetURL += "?" + req.URL.RawQuery
+	}
+	if req.URL.Fragment != "" {
+		targetURL += "#" + req.URL.Fragment
+	}
+
+	request, err := http.NewRequest(req.Method, targetURL, req.Body)
 	if err != nil {
-		log.Println(err)
+		log.Println("error creating proxy request: ", err)
+		http.Error(w, "Bad Gateway", http.StatusBadGateway)
+		return
 	}
 	request.Header = req.Header
 
 	response, err := client.Do(request)
 	if err != nil {
-		log.Print("error response form proxy: ", err)
-	} else {
-		if _, err := io.Copy(w, response.Body); err != nil {
-			log.Print("error copyting the response from proxy: ", err)
+		log.Print("error response from proxy: ", err)
+		http.Error(w, "Bad Gateway", http.StatusBadGateway)
+		return
+	}
+	defer response.Body.Close()
+
+	// Copy all headers from proxied response
+	for key, values := range response.Header {
+		w.Header().Del(key)
+		for _, value := range values {
+			w.Header().Add(key, value)
 		}
+	}
+
+	// Override with our CORS settings if configured
+	if *corsOrigin != "" {
+		w.Header().Set("Access-Control-Allow-Origin", *corsOrigin)
+		w.Header().Set("Access-Control-Allow-Methods", *corsMethods)
+		w.Header().Set("Access-Control-Allow-Headers", *corsHeaders)
+	}
+
+	// Write status code from proxied response
+	w.WriteHeader(response.StatusCode)
+
+	// Copy response body
+	if _, err := io.Copy(w, response.Body); err != nil {
+		log.Print("error copying the response from proxy: ", err)
 	}
 }
 
@@ -120,11 +155,11 @@ func parseProxy(flagStr string) (handlers []*proxyHandler) {
 	return
 }
 
-type protectdFileSystem struct {
+type protectedFileSystem struct {
 	fs http.FileSystem
 }
 
-func (pfs protectdFileSystem) Open(path string) (http.File, error) {
+func (pfs protectedFileSystem) Open(path string) (http.File, error) {
 	if isDenied(path, *deny) {
 		return nil, os.ErrPermission
 	}
@@ -146,7 +181,7 @@ func main() {
 			if *deny == "" {
 				log.Print("Warning: serving files without any filter!")
 			}
-			handler = http.StripPrefix(*path, http.FileServer(protectdFileSystem{http.Dir(body)}))
+			handler = http.StripPrefix(*path, http.FileServer(protectedFileSystem{http.Dir(body)}))
 		case mode.IsRegular():
 			if content, err := os.ReadFile(body); err != nil {
 				log.Fatal("Error reading file: ", err)
