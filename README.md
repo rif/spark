@@ -19,13 +19,15 @@ Usage of spark:
   -corsHeaders string
     	Allowed CORS headers (default "Content-Type, Authorization, X-Requested-With")
   -corsMethods string
-    	Allowd CORS methods (default "POST, GET, OPTIONS, PUT, DELETE")
+    	Allowed CORS methods (default "POST, GET, OPTIONS, PUT, DELETE")
   -corsOrigin string
-    	Allow CORS request from this origin (can be '*')
+    	Allow CORS requests from this origin (can be '*')
   -deny string
     	Sensitive directory or file patterns to be denied when serving directory (comma separated)
   -key string
     	SSL private Key path (default "key.pem")
+  -mock string
+    	Directory containing mock responses
   -path string
     	URL path (default "/")
   -port string
@@ -36,6 +38,8 @@ Usage of spark:
     	SSL listening port (default "10433")
   -status int
     	Returned HTTP status code (default 200)
+  -version
+    	prints current version
 ```
 
 ## install
@@ -57,6 +61,39 @@ $ spark -deny ".git*,LICENSE" ~/go/rif/spark
 $ spark -proxy "/api=>http://localhost:9090/api" .
 $ spark -port 9000 -corsOrigin "https://www.mydomain.com" -contentType "application/json" '{"message":"Hello"}'
 ```
+
+## new features
+
+### echo endpoint
+The `/echo` endpoint returns request details (method, headers, body) for debugging:
+```
+$ spark "Hello" &
+$ curl -X POST http://localhost:8080/echo -d '{"test": "data"}'
+```
+
+### mock server
+Create mock API responses using directory structure:
+```
+# Directory structure defines endpoints
+mock/
+  users/
+    GET              # responds to GET /users
+    POST_201         # responds to POST /users with 201 status
+  api/
+    products/
+      GET            # responds to GET /api/products
+
+# Start mock server
+$ spark -mock mock/
+
+# Test endpoints
+$ curl http://localhost:8080/users
+$ curl -X POST http://localhost:8080/users
+```
+
+Files are named after HTTP verbs (case-insensitive). Add `_STATUS` suffix for custom status codes (e.g., `POST_201`, `DELETE_204`). Returns 405 Method Not Allowed for unsupported methods.
+
+## ssl certificate
 
 To quickly generate a ssl certificate run:
 
