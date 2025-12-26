@@ -1,5 +1,8 @@
 # .goreleaser.yml
+version: 2
+
 project_name: spark
+
 builds:
   - id: spark
     binary: spark
@@ -16,23 +19,29 @@ builds:
       - 386
       - arm
       - arm64
+    goarm:
+      - "7"
+    ignore:
+      - goos: windows
+        goarch: arm
     ldflags:
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser
 
 archives:
   - id: spark
-    builds: [spark]
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
-    format: tar.gz
+    formats:
+      - tar.gz
     format_overrides:
       - goos: windows
-        format: zip
+        formats:
+          - zip
 
 checksum:
   name_template: 'checksums.txt'
 
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  version_template: "{{ .Tag }}-next"
 
 release:
   # In order for release to work, you need to export a GITHUB_TOKEN environment variable.
