@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -25,6 +27,14 @@ var (
 	corsMethods = flag.String("corsMethods", "POST, GET, OPTIONS, PUT, DELETE", "Allowed CORS methods")
 	corsHeaders = flag.String("corsHeaders", "Content-Type, Authorization, X-Requested-With", "Allowed CORS headers")
 	contentType = flag.String("contentType", "", "Set response Content-Type")
+	versionFlag = flag.Bool("version", false, "prints current version")
+)
+
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+	builtBy = "goreleaser"
 )
 
 type bytesHandler []byte
@@ -60,6 +70,52 @@ func middleware(next http.Handler) http.Handler {
 		// Call the next handler, which can be another middleware in the chain, or the final handler.
 		next.ServeHTTP(w, r)
 	})
+}
+
+type echoHandler struct{}
+
+func (eh *echoHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	var buffer bytes.Buffer
+	multiWriter := io.MultiWriter(w, &buffer)
+
+	// Buffer body
+	var bodyBytes []byte
+	if r.Body != nil {
+		bodyBytes, _ = io.ReadAll(r.Body)
+		r.Body.Close()
+	}
+
+	// Write REQUEST section
+	fmt.Fprintf(multiWriter, "=== REQUEST ===\n")
+	fmt.Fprintf(multiWriter, "Method: %s\n", r.Method)
+	fmt.Fprintf(multiWriter, "Path: %s\n", r.URL.Path)
+	if r.URL.RawQuery != "" {
+		fmt.Fprintf(multiWriter, "Query: %s\n", r.URL.RawQuery)
+	}
+	fmt.Fprintf(multiWriter, "Host: %s\n", r.Host)
+	fmt.Fprintf(multiWriter, "Protocol: %s\n", r.Proto)
+	fmt.Fprintf(multiWriter, "\n")
+
+	// Write HEADERS section
+	fmt.Fprintf(multiWriter, "=== HEADERS ===\n")
+	for name, values := range r.Header {
+		for _, value := range values {
+			fmt.Fprintf(multiWriter, "%s: %s\n", name, value)
+		}
+	}
+	fmt.Fprintf(multiWriter, "\n")
+
+	// Write BODY section
+	fmt.Fprintf(multiWriter, "=== BODY ===\n")
+	if len(bodyBytes) > 0 {
+		multiWriter.Write(bodyBytes)
+		fmt.Fprintf(multiWriter, "\n")
+	} else {
+		fmt.Fprintf(multiWriter, "(empty)\n")
+	}
+
+	// Log everything that was written
+	log.Print(buffer.String())
 }
 
 func (ph *proxyHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
@@ -168,6 +224,12 @@ func (pfs protectedFileSystem) Open(path string) (http.File, error) {
 
 func main() {
 	flag.Parse()
+
+	if *versionFlag {
+		fmt.Printf("spark version %s, commit %s, built at %s by %s\n", version, commit, date, builtBy)
+		os.Exit(0)
+	}
+
 	listen := *address + ":" + *port
 	listenTLS := *address + ":" + *sslPort
 	body := flag.Arg(0)
@@ -193,6 +255,8 @@ func main() {
 		handler = bytesHandler(body)
 	}
 	http.Handle(*path, middleware(handler))
+
+	http.Handle("/echo", middleware(&echoHandler{}))
 
 	if proxy != nil {
 		proxyHandlers := parseProxy(*proxy)

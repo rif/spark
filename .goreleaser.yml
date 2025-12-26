@@ -1,7 +1,11 @@
 # .goreleaser.yml
-# Build customization
+project_name: spark
 builds:
-  - binary: spark
+  - id: spark
+    binary: spark
+    main: ./spark.go
+    env:
+      - CGO_ENABLED=0
     goos:
       - windows
       - darwin
@@ -10,3 +14,31 @@ builds:
     goarch:
       - amd64
       - 386
+      - arm
+      - arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser
+
+archives:
+  - id: spark
+    builds: [spark]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+release:
+  # In order for release to work, you need to export a GITHUB_TOKEN environment variable.
+  # https://goreleaser.com/ci/actions/
+  # renovate: datasource=github-releases depName=goreleaser/goreleaser
+  github:
+    owner: rif
+    name: spark
+  prerelease: auto
